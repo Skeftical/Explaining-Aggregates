@@ -3,12 +3,14 @@ import os
 os.chdir("../../explanation_framework")
 import sys
 sys.path.append('codebase')
-from codebase.framework.Preprocessing import PreProcessing as PR
+from framework.Preprocessing import PreProcessing as PR
 import numpy as np
+from sklearn.linear_model import LinearRegression
 
 class PreProcessingTestCase(unittest.TestCase):
     def setUp(self):
-        self.pr = PR()
+        lr = LinearRegression()
+        self.pr = PR(lr)
         self.ex = np.random.uniform(size=(100,4))
         self.pr.fit(self.ex, np.random.uniform(size=100))
 

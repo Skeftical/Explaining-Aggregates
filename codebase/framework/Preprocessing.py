@@ -106,7 +106,7 @@ class PreProcessing():
                 print(e)
                 raise ValueError
 
-            self.final_product[(l1,l2)] = model
+            self.final_product[(l1,l2)] = estimator
 
     def fit(self,X,y):
         self.d = X.shape[1]
