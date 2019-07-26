@@ -92,21 +92,25 @@ class PreProcessing():
         #Fit an Earth model for each cluster
         for l1,l2 in self.data_in_clusters_L2:
             tcluster = self.data_in_clusters_L2[(l1,l2)]
-            XX = tcluster[:,:self.d]
+        XX = tcluster[:,:self.d]
             logger.info("Shape of Training data {}".format(XX.shape))
             yy = tcluster[:,-1]
             try:
-                model = Earth(max_degree=1)
-                model.fit(XX,yy)
+                estimator = deepcopy(self.learning_algorithm)
+
+                # model = Earth(max_degree=1, feature_importance_type='gcv')
+                estimator.fit(XX,yy)
             except ValueError as e:
                 print((i,j))
                 print(e)
                 raise ValueError
 
-            self.final_product[(l1,l2)] = [model]
+            self.final_product[(l1,l2)] = model
 
     def fit(self,X,y):
         self.d = X.shape[1]
+        self.min_y = np.min(y)
+        self.max_y = np.max(y)
         self.__preprocessing_x(X,y, self.vigil_x)
         self.__preprocessing_theta(self.vigil_theta)
         self.__fit_models()
@@ -132,20 +136,42 @@ class PreProcessing():
         dist = np.linalg.norm(tc - q[:,self.d//2:],axis=1) #Calculate distances between all neurons
         closest_t = np.argmin(dist)
         return (cx, closest_t)
-        
-    def get_model(self,q):
-        return self.get_models()[self.get_closest_l2(q)]
 
-    def __init__(self,vigil_theta=.4, vigil_x=.05):
+    def get_model(self,q):
+        return self.final_product[self.get_closest_l2(q)]
+
+
+    def __init__(self, learning_algorithm, vigil_theta=.4, vigil_x=.05):
         '''
         arg:
             d : dimensionality
         '''
         self.d = None
         self.vigil_theta=vigil_theta
+        self.learning_algorithm = learning_algorithm
         self.vigil_x = vigil_x
         self.data_in_clusters_L1 = {}
         self.CLUSTER_CENTERS = None
         self.data_in_clusters_L2 = {}
         self.THETA_CENTERS = {}
         self.final_product = {}
+
+
+class OnlineMode(PreProcessing):
+
+
+        def partial_fit(self, X, y):
+            assert X.shape[1]==self.d
+            cx = self.get_closest_l1(q) #Obtain L1 representative
+            tc = self.get_theta_centers()[cx] #Obtain L2 associated theta Centers
+            dist = np.linalg.norm(tc - q[:,self.d//2:],axis=1) #Calculate distances between all neurons
+            closest_t = np.argmin(dist)
+            #Get All get_models for closest L1
+            assoc_models = filter(lambda x: x[0]==cx, self.final_product)
+            preds = np.array([self.final_product[k].predict(X) for k in assoc_models])
+            errors = np.sqrt((preds-y)**2) #Error between prediction and each model (y-y_hat)**2
+            #Normalize
+            errors = (errors.self.min_y)/(self.max_y-self.min_y)
+            combined_distances = 0.5*dist + 0.5*errors
+            ct = np.argmin(combined_distances)
+            assert combined_distances.shape[0] == self.THETA_CENTERS[cx].shape[0]
