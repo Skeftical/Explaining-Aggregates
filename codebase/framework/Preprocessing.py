@@ -1,4 +1,5 @@
 from sklearn.cluster import KMeans
+from copy import deepcopy,copy
 import numpy as np
 import copy
 from pyearth import Earth
