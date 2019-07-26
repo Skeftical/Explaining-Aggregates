@@ -92,7 +92,7 @@ class PreProcessing():
         #Fit an Earth model for each cluster
         for l1,l2 in self.data_in_clusters_L2:
             tcluster = self.data_in_clusters_L2[(l1,l2)]
-        XX = tcluster[:,:self.d]
+            XX = tcluster[:,:self.d]
             logger.info("Shape of Training data {}".format(XX.shape))
             yy = tcluster[:,-1]
             try:
