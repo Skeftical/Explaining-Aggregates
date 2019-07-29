@@ -55,7 +55,7 @@ def set_number_and_locations_of_clusters_Uniform():
     clusters = np.random.uniform(low=(x_min,y_min), high=(x_max,y_max),size=(CLUSTERS,2))
     #Create queries around those central points
     #Fraction of variance for how widespread the queries would be
-    length = np.array([0.01*(x_std), 0.01*(y_std)])
+    length = np.array([0.01*(x_std), 0.01*(y_std)]).reshape(1,2)
     queries = map(lambda x : np.random.uniform(low=x-length,high=x+length , size=int(QUERIES/CLUSTERS)), clusters)
     col_queries = np.array(list(queries)).reshape(-1,2)
     return col_queries
@@ -117,6 +117,7 @@ if __name__=='__main__':
             print("X Distribution : {}\tLength Distribution : {}".format(xdist,ldist))
             if 'train_workload_x-{}-length-{}-{}-users-{}.csv'.format(xdist, ldist, CLUSTERS,QUERIES) in existing or "test_workload_x-{}-length-{}-{}-users-{}.csv".format(xdist, ldist, CLUSTERS,QUERIES) in existing:
                 print("Files already exist; skipping ")
+                continue;
             if xdist=="gauss":
                 col_queries = set_number_and_locations_of_clusters_Normal()
             else:
