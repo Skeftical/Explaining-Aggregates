@@ -28,7 +28,7 @@ def load_data():
     dd_matrix[:,2] = dd_matrix[:,2].astype(int)
 
 def vectorize_query(q):
-    res = dd_matrix[np.all((dd_matrix[:,:2]>q[:,:dim]-q[:,dim:2*dim]) & (dd_matrix[:,:2]<q[:,:dim]+q[:,dim:2*dim]),axis=1)]
+    res = dd_matrix[np.all((dd_matrix[:,:2]>q[:,:DIM]-q[:,DIM:2*DIM]) & (dd_matrix[:,:2]<q[:,:DIM]+q[:,DIM:2*DIM]),axis=1)]
     return np.array([res.shape[0], np.sum(res[:,2]),np.mean(res[:,3])]) if res.shape[0]!=0 else np.zeros(3)
 
 def get_pertubations(sq):
