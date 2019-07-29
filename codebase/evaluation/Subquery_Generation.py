@@ -22,8 +22,8 @@ NSUBQUERIES = Config.NSUBQUERIES
 def load_data():
     logger.info("Loading Data...")
     data = pd.read_csv('input/Crimes_-_2001_to_present.csv', header=0)
-    global dd
     dd = data[['X Coordinate', 'Y Coordinate', 'Arrest', 'Beat']]
+    global dd_matrix
     dd_matrix = dd.values
     dd_matrix[:,2] = dd_matrix[:,2].astype(int)
 
