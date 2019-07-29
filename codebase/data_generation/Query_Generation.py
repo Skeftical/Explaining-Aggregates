@@ -14,9 +14,7 @@ if not os.path.exists('input/Crimes_Workload'):
         print('creating directory' ,'Crimes_Workload')
         os.makedirs('input/Crimes_Workload')
 existing = set(os.listdir('input/Crimes_Workload'))
-if 'train_workload_gauss-{}-users-{}.csv'.format(CLUSTERS,QUERIES) in existing or 'test_workload_gauss-{}-users-{}.csv'.format(CLUSTERS,QUERIES) in existing:
-    print("Files already exist; exiting ")
-    sys.exit(0)
+
 
 def load_data():
     print("Loading Data...")
