@@ -56,7 +56,8 @@ def set_number_and_locations_of_clusters_Uniform():
     #Create queries around those central points
     #Fraction of variance for how widespread the queries would be
     length = np.array([0.01*(x_std), 0.01*(y_std)]).reshape(1,2)
-    queries = map(lambda x : np.random.uniform(low=x-length,high=x+length , size=int(QUERIES/CLUSTERS)), clusters)
+    print(clusters[0]-length)
+    queries = map(lambda x : np.random.uniform(low=x-length,high=x+length , size=(int(QUERIES/CLUSTERS),2)), clusters)
     col_queries = np.array(list(queries)).reshape(-1,2)
     return col_queries
 
@@ -111,7 +112,7 @@ def construct_queries(col_queries,xdist, ldist):
 if __name__=='__main__':
     np.random.seed(15)
     load_data()
-    distributions = ["gauss", "uniform"]
+    distributions = ["uniform", "gauss"]
     for xdist in distributions:
         for ldist in distributions:
             print("X Distribution : {}\tLength Distribution : {}".format(xdist,ldist))
