@@ -50,7 +50,7 @@ def generate_subqueries_for_files():
             global std
             std = df[['x','y','x_range','y_range']].std().values
             pertubations = Parallel(n_jobs=4, verbose=1)(delayed(get_pertubations)(sq)
-                                                                                for sq in df.values[:10,:])
+                                                                                for sq in df.values)
             pertubations = np.array(pertubations)
             logger.info("Saving file {}".format(filename))
             np.save('input/Subqueries/subqueries_{}'.format(filename),pertubations)
