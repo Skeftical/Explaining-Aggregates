@@ -53,7 +53,7 @@ def generate_subqueries_for_files():
                                                                                 for sq in df.values[:10,:])
             pertubations = np.array(pertubations)
             logger.info("Saving file {}".format(filename))
-            np.save('input/Subqueries/subqueries_{}'.format(filename))
+            np.save('input/Subqueries/subqueries_{}'.format(filename),pertubations)
         else:
             logger.info("Skipping {}".format(filename))
 
