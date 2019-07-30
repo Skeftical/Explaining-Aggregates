@@ -49,8 +49,8 @@ def generate_subqueries_for_files():
             df = pd.read_csv('input/Crimes_Workload/{}'.format(filename), index_col=0)
             global std
             std = df[['x','y','x_range','y_range']].std().values
-            pertubations = Parallel(n_jobs=4, verbose=1)(delayed(get_pertubations)(sq)
-                                                                                for sq in df.values)
+            pertubations = Parallel(n_jobs=4, verbose=2)(delayed(get_pertubations)(sq)
+                                                                                for sq in df.values[:1000,:])
             pertubations = np.array(pertubations)
             logger.info("Saving file {}".format(filename))
             np.save('input/Subqueries/subqueries_{}'.format(filename),pertubations)
