@@ -22,13 +22,12 @@ NSUBQUERIES = Config.NSUBQUERIES
 def load_data():
     logger.info("Loading Data...")
     data = pd.read_csv('input/Crimes_-_2001_to_present.csv', header=0)
+    global dd
     dd = data[['X Coordinate', 'Y Coordinate', 'Arrest', 'Beat']]
-    global dd_matrix
-    dd_matrix = dd.values
-    dd_matrix[:,2] = dd_matrix[:,2].astype(int)
 
 def vectorize_query(q):
-    res = dd_matrix[np.all((dd_matrix[:,:2]>q[:,:DIM]-q[:,DIM:2*DIM]) & (dd_matrix[:,:2]<q[:,:DIM]+q[:,DIM:2*DIM]),axis=1)]
+    # res = dd_matrix[np.all((dd_matrix[:,:2]>q[:,:DIM]-q[:,DIM:2*DIM]) & (dd_matrix[:,:2]<q[:,:DIM]+q[:,DIM:2*DIM]),axis=1)]
+    res = dd[(dd['X Coordinate']>float(q[:,0]-q[:,2])) & (dd['X Coordinate']<float(q[:,0]+q[:,2])) & (dd['Y Coordinate']>float(q[:,1]-q[:,3])) & (dd['Y Coordinate']<float(q[:,1]+q[:,3]))].values
     return np.array([res.shape[0], np.sum(res[:,2]),np.mean(res[:,3])]) if res.shape[0]!=0 else np.zeros(3)
 
 def get_pertubations(sq):
@@ -36,7 +35,7 @@ def get_pertubations(sq):
     S = sq.reshape(1,7)[:,:4]+pertubation
     res_matrix = np.array(list(map(lambda q : vectorize_query(q.reshape(1,4)), S)))
     assert res_matrix.shape == (NSUBQUERIES,3)
-    subqueries = np.column_stack((pertubation,res_matrix))
+    subqueries = np.column_stack((S,res_matrix))
     return subqueries
 
 
