@@ -4,6 +4,7 @@ import numpy as np
 import copy
 from pyearth import Earth
 from setup import logger
+logger = logging.getLogger('PreProcessing')
 
 class PreProcessing():
 

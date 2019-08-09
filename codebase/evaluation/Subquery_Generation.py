@@ -31,7 +31,7 @@ def vectorize_query(q):
     return np.array([res.shape[0], np.sum(res[:,2]),np.mean(res[:,3])]) if res.shape[0]!=0 else np.zeros(3)
 
 def get_pertubations(sq):
-    pertubation = np.random.uniform(low=-1,high=1, size=(NSUBQUERIES,2*DIM))*(0.01*std)
+    pertubation = np.random.uniform(low=-1,high=1, size=(NSUBQUERIES,2*DIM))*(0.001*std)
     S = sq.reshape(1,7)[:,:4]+pertubation
     res_matrix = np.array(list(map(lambda q : vectorize_query(q.reshape(1,4)), S)))
     assert res_matrix.shape == (NSUBQUERIES,3)
