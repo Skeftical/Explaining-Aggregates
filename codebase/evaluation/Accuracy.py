@@ -49,9 +49,11 @@ def kl_divergence_error(y, y_hat):
 def model_based_divergence(X,y, model_2):
     model_1 = Earth(feature_importance_type='gcv')
     model_1.fit(X,y)
-    features_l = model_1.feature_importances_.reshape(-1,1)
-    features_else = model_2.feature_importances_.reshape(-1,1)
-    return metrics.pairwise.cosine_similarity(features_l, features_else)
+    features_l = model_1.feature_importances_
+    features_else = model_2.feature_importances_
+    a_ = np.linalg.norm(features_l)
+    b_ = np.linalg.norm(features_else)
+    return np.dot(features_l,features_else)/(a_*b_*)
 
 def metrics_for_model(model_name, dataset_name,aggregate_name,y_hat,X, y,model, res_eval):
     r2 = metrics.r2_score(y,y_hat)
