@@ -90,6 +90,7 @@ if __name__=='__main__':
 
     res_eval = {'model': [],
                'dataset': [],
+               'aggregate_name': [],
                'kl': [],
                'r2':[],
                'md':[],
