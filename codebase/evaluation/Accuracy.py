@@ -10,6 +10,7 @@ sys.path.append('utils')
 from terminal_outputs import printProgressBar
 from confs import Config
 from setup import logger
+import logging
 #Models
 from pyearth import Earth
 from sklearn.cluster import KMeans
@@ -17,6 +18,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import KernelDensity
 from scipy.stats import entropy
 from codebase.framework.Preprocessing import PreProcessing as PR
+logger = logging.getLogger('Accuracy')
 
 if not os.path.exists('output/Accuracy'):
         logger.info('creating directory Accuracy')
