@@ -102,9 +102,11 @@ if __name__=='__main__':
             logger.info("Model Training Initiation\n=====================")
             kmeans = KMeans()
             mars_ = Earth(feature_importance_type='gcv',)
+
+            lsnr = PR(mars_)
             lsnr.fit(X_train,y_train)
 
-            
+
             logger.info("Accuracy Evaluation on Test set\n=====================")
             for i in range(1000):
                 #Obtain query from test-set
