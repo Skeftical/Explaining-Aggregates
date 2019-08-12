@@ -15,6 +15,7 @@ from pyearth import Earth
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import KernelDensity
+from sklearn import metrics
 from scipy.stats import entropy
 from codebase.framework.Preprocessing import PreProcessing as PR
 import argparse
