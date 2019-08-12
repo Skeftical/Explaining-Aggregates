@@ -153,5 +153,5 @@ if __name__=='__main__':
                 metrics_for_model('global',dataset,agg,y_hat_g,X,y,mars_global,res_eval)
             break;
         break;
-        eval_df = pd.DataFrame(res_eval)
-        eval_df.to_csv('output/Accuracy/evaluation_results.csv')
+    eval_df = pd.DataFrame(res_eval)
+    eval_df.to_csv('output/Accuracy/evaluation_results.csv')
