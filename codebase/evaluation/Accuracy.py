@@ -10,7 +10,6 @@ sys.path.append('utils')
 from terminal_outputs import printProgressBar
 from confs import Config
 from setup import logger
-import logging
 #Models
 from pyearth import Earth
 from sklearn.cluster import KMeans
@@ -18,8 +17,20 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import KernelDensity
 from scipy.stats import entropy
 from codebase.framework.Preprocessing import PreProcessing as PR
-logger = logging.getLogger('Accuracy')
+import argparse
+import logging
 
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--verbose", dest='verbosity', help="increase output verbosity",
+                    action="store_true")
+parser.add_argument('-v',help='verbosity',dest='verbosity',action="store_true")
+args = parser.parse_args()
+if args.verbosity:
+   print("verbosity turned on")
+   handler = logging.StreamHandler(sys.stdout)
+   handler.setLevel(logging.DEBUG)
+   logger.addHandler(handler)
 if not os.path.exists('output/Accuracy'):
         logger.info('creating directory Accuracy')
         os.makedirs('output/Accuracy')
