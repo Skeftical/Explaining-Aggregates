@@ -121,6 +121,8 @@ if __name__=='__main__':
             lsnr = PR(mars_)
             lsnr.fit(X_train,y_train)
 
+            mars_global = Earth(feature_importance_type='gcv')
+            mars_global.fit(X_train, y_train)
 
             logger.info("Accuracy Evaluation on Test set\n=====================")
             for i in range(1000):
