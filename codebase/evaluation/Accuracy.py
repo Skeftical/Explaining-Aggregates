@@ -138,7 +138,7 @@ if __name__=='__main__':
                 #Obtain subquery pertubations for query q from test set
                 q1 = sub[i]
                 X = q1[:,:4]
-                y = q1[:,agg_map['agg']]
+                y = q1[:,agg_map[agg]]
                 X = sc.transform(X)
                 # Train local model (Should be the best out of the 3)
                 mars = Earth(feature_importance_type='gcv')
