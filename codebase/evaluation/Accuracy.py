@@ -108,6 +108,7 @@ if __name__=='__main__':
 
         logger.info('Finished loading\nCommencing Evaluation')
         aggregates = ['count','sum_','avg']
+        agg_map = {'count' :4, 'sum_':5, 'avg':6}
         for agg in aggregates:
             logger.info("Evaluating Aggregates : {0}".format(agg))
             X_train = train_df[['x','y','x_range','y_range']].values
@@ -137,7 +138,7 @@ if __name__=='__main__':
                 #Obtain subquery pertubations for query q from test set
                 q1 = sub[i]
                 X = q1[:,:4]
-                y = q1[:,4]
+                y = q1[:,agg_map['agg']]
                 X = sc.transform(X)
                 # Train local model (Should be the best out of the 3)
                 mars = Earth(feature_importance_type='gcv')
@@ -153,5 +154,6 @@ if __name__=='__main__':
                 #Obtain metrics for global
                 y_hat_g = mars_global.predict(X)
                 metrics_for_model('global',dataset,agg,y_hat_g,X,y,mars_global,res_eval)
+            logger.info("Finished Queries")
     eval_df = pd.DataFrame(res_eval)
     eval_df.to_csv('output/Accuracy/evaluation_results.csv')
