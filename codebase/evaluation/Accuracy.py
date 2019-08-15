@@ -103,7 +103,7 @@ if __name__=='__main__':
         logger.info('Loading Datasets...')
 
         test_df = pd.read_csv('/home/fotis/dev_projects/explanation_framework/input/Crimes_Workload/{0}'.format(test_datasets[p]), index_col=0)
-        train_df = train = pd.read_csv('/home/fotis/dev_projects/explanation_framework/input/Crimes_Workload/{0}'.format(train_datasets[p]), index_col=0)
+        train_df = pd.read_csv('/home/fotis/dev_projects/explanation_framework/input/Crimes_Workload/{0}'.format(train_datasets[p]), index_col=0)
         sub = np.load('/home/fotis/dev_projects/explanation_framework/input/Subqueries/{0}'.format(sub_datasets[p]))
 
         logger.info('Finished loading\nCommencing Evaluation')
