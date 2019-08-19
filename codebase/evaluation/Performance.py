@@ -61,7 +61,7 @@ if __name__=='__main__':
     for i in range(10):
         initial = pd.concat([initial, part])
         for j in range(3):
-        t = execution_time(part)
+            t = execution_time(part)
             data['size'].append(initial.count()[0])
             data['time'] .append(t)
     eval_df = pd.DataFrame(data)
