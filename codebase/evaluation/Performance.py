@@ -61,7 +61,7 @@ if __name__=='__main__':
     for i in range(5):
         initial = pd.concat([initial, part])
         t = execution_time(part)
-        data['size'] = initial.count()[0]
-        data['time'] = t
+        data['size'].append(initial.count()[0])
+        data['time'] .append(t)
     eval_df = pd.DataFrame(data)
     eval_df.to_csv('output/Performance/evaluation_results_training_time.csv')
