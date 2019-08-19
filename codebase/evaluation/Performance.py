@@ -58,7 +58,7 @@ if __name__=='__main__':
     initial = train_df.head(5000)
     part = train_df.head(5000)
     data = {'size' : [], 'time':[]}
-    for i in range(5):
+    for i in range(10):
         initial = pd.concat([initial, part])
         t = execution_time(part)
         data['size'].append(initial.count()[0])
