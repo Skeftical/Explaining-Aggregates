@@ -37,7 +37,7 @@ if not os.path.exists('output/Performance'):
 
 def execution_time(train_df):
         X_train = train_df[['x','y','x_range','y_range']].values
-        y_train = train_df[agg].values
+        y_train = train_df['count'].values
         sc = StandardScaler()
         sc.fit(X_train)
         X_train = sc.transform(X_train)
