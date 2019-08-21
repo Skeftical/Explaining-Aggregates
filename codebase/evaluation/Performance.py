@@ -43,26 +43,28 @@ def execution_time(train_df):
         X_train = sc.transform(X_train)
         #Training Models
         logger.info("Model Training Initiation\n=====================")
-        kmeans = KMeans()
+        kmeans = KMeans(random_state=0)
         mars_ = Earth(feature_importance_type='gcv',)
 
         lsnr = PR(mars_)
         start = time.time()
         lsnr.fit(X_train,y_train)
-        return (time.time()-start)
+        return (time.time()-start, lsnr.get_number_of_l1(), lsnr.get_number_of_l2())
 
 if __name__=='__main__':
     np.random.seed(15)
     logger.info("Finding datasets...")
     train_df = pd.read_csv('/home/fotis/dev_projects/explanation_framework/input/Crimes_Workload/train_workload_x-gauss-length-gauss-5-users-50000.csv', index_col=0)
-    initial = train_df.head(5000)
+    initial = train_df.head(10000)
     part = train_df.head(5000)
-    data = {'size' : [], 'time':[]}
+    data = {'size' : [], 'time':[], 'l1':[],'l2':[]}
     for i in range(10):
         initial = pd.concat([initial, part])
-        for j in range(3):
-            t = execution_time(part)
+        for j in range(10):
+            t,l1,l2 = execution_time(part)
             data['size'].append(initial.count()[0])
             data['time'] .append(t)
+            data['l1'].append(l1)
+            data['l2'].append(l2)
     eval_df = pd.DataFrame(data)
     eval_df.to_csv('output/Performance/evaluation_results_training_time.csv')

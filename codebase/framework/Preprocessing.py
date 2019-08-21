@@ -124,6 +124,12 @@ class PreProcessing():
     def get_theta_centers(self):
         return self.THETA_CENTERS
 
+    def get_number_of_l1(self):
+        return self.CLUSTER_CENTERS.shape[0]
+
+    def get_number_of_l2(self):
+        return sum(map(lambda x: x.shape[0],self.THETA_CENTERS))
+        
     def get_models(self):
         return self.final_product
 
