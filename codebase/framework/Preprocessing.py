@@ -128,8 +128,8 @@ class PreProcessing():
         return self.CLUSTER_CENTERS.shape[0]
 
     def get_number_of_l2(self):
-        return sum(map(lambda x: x.shape[0],self.THETA_CENTERS))
-        
+        return sum(map(lambda x: self.THETA_CENTERS[x].shape[0],self.THETA_CENTERS))
+
     def get_models(self):
         return self.final_product
 
