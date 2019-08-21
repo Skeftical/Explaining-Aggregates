@@ -90,13 +90,15 @@ if __name__=='__main__':
         test_datasets[p] = res[0] if res[0].startswith('test') else res[1]
         sub_datasets[p] = [os.fsdecode(n) for n in os.listdir(directory_sub) if fnmatch.fnmatch(os.fsdecode(n), patterns[p])][0]
 
-    res_eval = {'sens_t': [],
+    res_eval = {'sens_x': [],
                'dataset': [],
                'aggregate_name': [],
                'kl': [],
                'r2':[],
                'md':[],
-               'nrmse':[]}
+               'nrmse':[],
+               'l1clusters':[],
+               'l2clusters': []}
     #Main
     for p in patterns:
         logger.info('Beginning Evaluation for {0}'.format(p))
@@ -144,7 +146,8 @@ if __name__=='__main__':
                     #Obtain metrics for our
                     y_hat_s = lsnr.get_model(q).predict(X)
                     metrics_for_model(sens_t,dataset,agg,y_hat_s,X,y,lsnr.get_model(q) ,res_eval)
-
+                    res_eval['l1clusters'].append(lsnr.get_number_of_l1())
+                    res_eval['l2clusters'].append(lsnr.get_number_of_l2())
 
 
                 logger.info("Finished Queries")
