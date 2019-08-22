@@ -66,5 +66,6 @@ if __name__=='__main__':
             data['time'] .append(t)
             data['l1'].append(l1)
             data['l2'].append(l2)
+            logger.info("Loop {}/100".format(j+10**i))
     eval_df = pd.DataFrame(data)
     eval_df.to_csv('output/Performance/evaluation_results_training_time.csv')

@@ -4,8 +4,8 @@ import numpy as np
 import copy
 from pyearth import Earth
 from setup import logger
-import logging
-logger = logging.getLogger('PreProcessing')
+# import logging
+# logger = logging.getLogger('PreProcessing')
 
 class PreProcessing():
 
@@ -19,12 +19,13 @@ class PreProcessing():
         X_ = X[:,:self.d//2]
         logger.info("Shape of X in preprocessing x is : {}".format(X_.shape))
         while diff>= vigil:
+            logger.info("Current diff {0}/{1}".format(diff, vigil))
             c+=1
             kmeans = KMeans(n_clusters=c)
             kmeans.fit(X_)
             pres_inertia = kmeans.inertia_
             if not init:
-                diff = np.log(np.abs(prev_inertia - pres_inertia))
+                diff = np.abs(prev_inertia - pres_inertia)
                 prev_inertia = pres_inertia
             else:
                 prev_inertia = pres_inertia
@@ -42,7 +43,6 @@ class PreProcessing():
             logger.info("Data shape in cluster {} : {}".format(i,self.data_in_clusters_L1[i].shape))
         self.CLUSTER_CENTERS = kmeans.cluster_centers_
         logger.info("Cluster centers shape {}".format(self.CLUSTER_CENTERS.shape))
-
 
     def __preprocessing_theta(self, vigil=.4):
         import warnings
@@ -62,13 +62,14 @@ class PreProcessing():
                 pres_inertia = 0
                 init = True
                 diff = np.inf
-                while np.log(diff)>= vigil:
+                while diff>= vigil:
+                    logger.info("Current diff {0}/{1}".format(diff, vigil))
                     c+=1
                     t_kmeans = KMeans(n_clusters=c)
                     t_kmeans.fit(X)
                     pres_inertia = t_kmeans.inertia_
                     if not init:
-                        diff = np.log(np.abs(prev_inertia - pres_inertia))
+                        diff = np.abs(prev_inertia - pres_inertia)
                         prev_inertia = pres_inertia
                     else:
                         prev_inertia = pres_inertia
@@ -171,9 +172,9 @@ class OnlineMode(PreProcessing):
 
         def partial_fit(self, X, y):
             assert X.shape[1]==self.d
-            cx = self.get_closest_l1(q) #Obtain L1 representative
+            cx = self.get_closest_l1(X) #Obtain L1 representative
             tc = self.get_theta_centers()[cx] #Obtain L2 associated theta Centers
-            dist = np.linalg.norm(tc - q[:,self.d//2:],axis=1) #Calculate distances between all neurons
+            dist = np.linalg.norm(tc - X[:,self.d//2:],axis=1) #Calculate distances between all reperesentatives
             closest_t = np.argmin(dist)
             #Get All get_models for closest L1
             assoc_models = filter(lambda x: x[0]==cx, self.final_product)
