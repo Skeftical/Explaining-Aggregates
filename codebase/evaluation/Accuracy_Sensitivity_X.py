@@ -122,7 +122,7 @@ if __name__=='__main__':
             logger.info("Model Training Initiation\n=====================")
             kmeans = KMeans()
             mars_ = Earth(feature_importance_type='gcv',)
-            vigilance_x = np.linspace(0.01, 3, Config.vigilance_x_frequency)
+            vigilance_x = np.linspace(0.0001, 3, Config.vigilance_x_frequency)
             for sens_x in vigilance_x:
                 lsnr = PR(mars_,vigil_x=sens_x)
                 lsnr.fit(X_train,y_train)
