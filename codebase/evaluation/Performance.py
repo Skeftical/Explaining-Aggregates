@@ -166,3 +166,6 @@ if __name__=='__main__':
     eval_df = pd.DataFrame(data)
     eval_df.to_csv('output/Performance/explanation_serving_t.csv')
     logger.info("Beginning Prediction Serving Performance Measurement")
+    data = prediction_serving_time(train_df)
+    eval_df = pd.DataFrame(data)
+    eval_df.to_csv('output/Performance/prediction_serving_time.csv')
