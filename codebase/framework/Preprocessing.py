@@ -21,7 +21,7 @@ class PreProcessing():
         while diff>= vigil:
             logger.info("Current diff {0}/{1}".format(diff, vigil))
             c+=1
-            kmeans = KMeans(n_clusters=c)
+            kmeans = KMeans(n_clusters=c,random_state=0)
             kmeans.fit(X_)
             pres_inertia = kmeans.inertia_
             if not init:
@@ -59,13 +59,12 @@ class PreProcessing():
             #Tuning k-parameter for kmeans
                 c=0
                 prev_inertia = 0
-                pres_inertia = 0
                 init = True
                 diff = np.inf
                 while diff>= vigil:
                     logger.info("Current diff {0}/{1}".format(diff, vigil))
                     c+=1
-                    t_kmeans = KMeans(n_clusters=c)
+                    t_kmeans = KMeans(n_clusters=c, random_state=0)
                     t_kmeans.fit(X)
                     pres_inertia = t_kmeans.inertia_
                     if not init:
@@ -82,7 +81,7 @@ class PreProcessing():
         #     #End of tuning
 
             CLUSTERS = c
-            t_kmeans = KMeans(n_clusters=CLUSTERS)
+            t_kmeans = KMeans(n_clusters=CLUSTERS, random_state=0)
             t_kmeans.fit(X)
 
             for i in range(CLUSTERS):
