@@ -89,10 +89,10 @@ def explanation_serving_x(train_df):
             start = time.time()
             m = lsnr.get_model(q)
             end = time.time()
-            data['vigil_x'] = sens_x
-            data['explanation_serving_time'] = end
-            data['l1'] = lsnr.get_number_of_l1()
-            data['l2'] = lsnr.get_number_of_l2()
+            data['vigil_x'].append(sens_x)
+            data['explanation_serving_time'].append(end)
+            data['l1'].append(lsnr.get_number_of_l1())
+            data['l2'].append(lsnr.get_number_of_l2())
     return data
 
 def explanation_serving_t(train_df):
@@ -142,10 +142,10 @@ def prediction_serving_time(train_df):
             start = time.time()
             m = lsnr.get_model(q).predict(q)
             end = time.time()
-            data['dimensionality'] = q.shape[1]
-            data['prediction_serving_time'] = end
-            data['l1'] = lsnr.get_number_of_l1()
-            data['l2'] = lsnr.get_number_of_l2()
+            data['dimensionality'].append(q.shape[1])
+            data['prediction_serving_time'].append(end)
+            data['l1'].append(lsnr.get_number_of_l1())
+            data['l2'].append(lsnr.get_number_of_l2())
 
     return data
 if __name__=='__main__':
