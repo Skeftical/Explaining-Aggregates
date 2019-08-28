@@ -98,7 +98,8 @@ if __name__=='__main__':
                'md':[],
                'nrmse':[],
                'l1clusters':[],
-               'l2clusters': []}
+               'l2clusters': [],
+               'points': []}
     #Main
     for p in patterns:
         logger.info('Beginning Evaluation for {0}'.format(p))
@@ -148,6 +149,7 @@ if __name__=='__main__':
                     metrics_for_model(sens_t,dataset,agg,y_hat_s,X,y,lsnr.get_model(q) ,res_eval)
                     res_eval['l1clusters'].append(lsnr.get_number_of_l1())
                     res_eval['l2clusters'].append(lsnr.get_number_of_l2())
+                    res_eval['points'].append(lsnr.get_average_number_of_examples())
 
 
                 logger.info("Finished Queries")

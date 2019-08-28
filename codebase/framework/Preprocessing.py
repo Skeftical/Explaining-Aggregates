@@ -130,6 +130,9 @@ class PreProcessing():
     def get_number_of_l2(self):
         return sum(map(lambda x: self.THETA_CENTERS[x].shape[0],self.THETA_CENTERS))
 
+    def get_average_number_of_examples(self):
+        return np.mean(map(lambda x: self.data_in_clusters_L2[x].shape[0],self.data_in_clusters_L2))
+
     def get_models(self):
         return self.final_product
 
