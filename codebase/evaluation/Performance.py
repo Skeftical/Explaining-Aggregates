@@ -109,7 +109,7 @@ def explanation_serving_t(train_df):
     mars_ = Earth(feature_importance_type='gcv',)
     vigilance_t = np.linspace(0.01, 3, Config.vigilance_t_frequency)
     for sens_t in vigilance_t:
-        logger.info("Sensitivity Level {}".format(sens_x))
+        logger.info("Sensitivity Level {}".format(sens_t))
         lsnr = PR(mars_,vigil_theta=sens_t)
         lsnr.fit(X_train,y_train)
         for i in range(5):
@@ -118,10 +118,10 @@ def explanation_serving_t(train_df):
             start = time.time()
             m = lsnr.get_model(q)
             end = time.time()
-            data['vigil_t'] = sens_x
-            data['explanation_serving_time'] = end
-            data['l1'] = lsnr.get_number_of_l1()
-            data['l2'] = lsnr.get_number_of_l2()
+            data['vigil_t'].append(sens_t)
+            data['explanation_serving_time'].append(end)
+            data['l1'].append(lsnr.get_number_of_l1())
+            data['l2'].append(lsnr.get_number_of_l2())
     return data
 
 def prediction_serving_time(train_df):
@@ -152,15 +152,15 @@ if __name__=='__main__':
     np.random.seed(15)
     logger.info("Finding datasets...")
     train_df = pd.read_csv('/home/fotis/dev_projects/explanation_framework/input/Crimes_Workload/train_workload_x-gauss-length-gauss-5-users-50000.csv', index_col=0)
-    logger.info("Beginning Training Time Performance Measurement")
-    data = training_time(train_df)
-    eval_df = pd.DataFrame(data)
-    eval_df.to_csv('output/Performance/evaluation_results_training_time.csv')
-    logger.info("Beginning Explanation Serving Performance Measurement on vigil x")
-    data = explanation_serving_x(train_df)
-    eval_df = pd.DataFrame(data)
-    eval_df.to_csv('output/Performance/explanation_serving_x.csv')
-    logger.info("Beginning Explanation Serving Performance Measurement on vigil t")
+    # logger.info("Beginning Training Time Performance Measurement")
+    # data = training_time(train_df)
+    # eval_df = pd.DataFrame(data)
+    # eval_df.to_csv('output/Performance/evaluation_results_training_time.csv')
+    # logger.info("Beginning Explanation Serving Performance Measurement on vigil x")
+    # data = explanation_serving_x(train_df)
+    # eval_df = pd.DataFrame(data)
+    # eval_df.to_csv('output/Performance/explanation_serving_x.csv')
+    # logger.info("Beginning Explanation Serving Performance Measurement on vigil t")
 
     data = explanation_serving_t(train_df)
     eval_df = pd.DataFrame(data)
