@@ -135,7 +135,7 @@ def prediction_serving_time(train_df):
         X_train = sc.transform(X_train)
         kmeans = KMeans(random_state=0)
         mars_ = Earth(feature_importance_type='gcv',)
-        lsnr = PR(mars_,vigil_theta=sens_t)
+        lsnr = PR(mars_)
         lsnr.fit(X_train,y_train)
         for j in range(5):
             q = X_train[j,:].reshape(1,-1)
@@ -162,9 +162,9 @@ if __name__=='__main__':
     # eval_df.to_csv('output/Performance/explanation_serving_x.csv')
     # logger.info("Beginning Explanation Serving Performance Measurement on vigil t")
 
-    data = explanation_serving_t(train_df)
-    eval_df = pd.DataFrame(data)
-    eval_df.to_csv('output/Performance/explanation_serving_t.csv')
+    # data = explanation_serving_t(train_df)
+    # eval_df = pd.DataFrame(data)
+    # eval_df.to_csv('output/Performance/explanation_serving_t.csv')
     logger.info("Beginning Prediction Serving Performance Measurement")
     data = prediction_serving_time(train_df)
     eval_df = pd.DataFrame(data)
