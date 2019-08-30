@@ -135,7 +135,7 @@ def prediction_serving_time(train_df):
         X_train = sc.transform(X_train)
         kmeans = KMeans(random_state=0)
         mars_ = Earth(feature_importance_type='gcv',)
-        lsnr = PR(mars_)
+        lsnr = PR(mars_,vigil_x=1.5, vigil_theta=1.5)
         lsnr.fit(X_train,y_train)
         for j in range(5):
             q = X_train[j,:].reshape(1,-1)
