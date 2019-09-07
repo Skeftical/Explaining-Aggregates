@@ -90,7 +90,7 @@ if __name__=='__main__':
         test_datasets[p] = res[0] if res[0].startswith('test') else res[1]
         sub_datasets[p] = [os.fsdecode(n) for n in os.listdir(directory_sub) if fnmatch.fnmatch(os.fsdecode(n), patterns[p])][0]
 
-    res_eval = {'sens_x': [],
+    res_eval = {'sens_t': [],
                'dataset': [],
                'aggregate_name': [],
                'kl': [],
