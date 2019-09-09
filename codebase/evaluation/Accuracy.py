@@ -120,7 +120,7 @@ if __name__=='__main__':
             #Training Models
             logger.info("Model Training Initiation\n=====================")
             kmeans = KMeans()
-            lr - LinearRegression()
+            lr = LinearRegression()
 
             lsnr = PR(lr)
             lsnr.fit(X_train,y_train)
