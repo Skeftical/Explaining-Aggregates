@@ -21,13 +21,18 @@ from scipy.stats import entropy
 from codebase.framework.Preprocessing import PreProcessing as PR
 import argparse
 import logging
-
+from query_generation import generate_boolean_vector
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--verbose", dest='verbosity', help="increase output verbosity",
                     action="store_true")
 parser.add_argument('-v',help='verbosity',dest='verbosity',action="store_true")
+parser.add_argument("--crimes",dest="crimes", action="store_true")
+parser.add_argument("--higgs",dest="higgs", action="store_true")
+parser.add_argument("--accelerometer",dest="accelerometer", action="store_true")
+
 args = parser.parse_args()
+
 if args.verbosity:
    print("verbosity turned on")
    handler = logging.StreamHandler(sys.stdout)
@@ -36,8 +41,9 @@ if args.verbosity:
 if not os.path.exists('output/Accuracy'):
         logger.info('creating directory Accuracy')
         os.makedirs('output/Accuracy')
-
-
+if not (args.crimes or args.higgs or args.accelerometer):
+    logger.info("No data set specified")
+    sys.exit()
 
 
 def kl_divergence_error(y, y_hat):
@@ -69,11 +75,7 @@ def metrics_for_model(model_name, dataset_name,aggregate_name,y_hat,X, y,model, 
     res_eval['md'].append(md)
     res_eval['nrmse'].append(nrmse)
 
-
-
-
-if __name__=='__main__':
-    np.random.seed(15)
+def accuracy_on_crimes():
     logger.info("Finding datasets...")
     directory = os.fsencode('input/Crimes_Workload')
     directory_sub = os.fsencode('input/Subqueries/')
@@ -158,3 +160,59 @@ if __name__=='__main__':
             logger.info("Finished Queries")
     eval_df = pd.DataFrame(res_eval)
     eval_df.to_csv('output/Accuracy/evaluation_results_linear.csv')
+
+def accuracy_on_higgs():
+    logger.info("Starting Accuracy Tests on Higgs")
+    logger.info("================================")
+    df = pd.read_csv('input/sample_higgs_0.01.csv', index_col=0)
+    X = df[['m_bb','m_wwbb']].dropna().values
+    y = df['label']
+    min_ = np.min(X, axis=0)
+    max_ = np.max(X, axis=0)
+    X = (X-min_) / (max_-min_)
+    data = np.column_stack((X,y))
+    x = np.linspace(0.1,0.9,7)
+    xx,yy = np.meshgrid(x,x)
+    DIMS = X.shape[1]
+    cov = np.identity(DIMS)*0.001
+    cluster_centers = np.column_stack((xx.ravel(),yy.ravel()))
+    query_centers = []
+    #Generate queries over cluster centers
+    for c in cluster_centers:
+        queries = np.random.multivariate_normal(np.array(c), cov, size=40)
+        query_centers.append(queries)
+    query_centers = np.array(query_centers).reshape(-1,DIMS)
+
+    ranges = np.random.uniform(low=0.005**(1/3), high=0.25**(1/3), size=(query_centers.shape[0], DIMS))
+    queries = []
+    empty = 0
+    for q,r in zip(query_centers,ranges):
+            b = generate_boolean_vector(data,q,r,2)
+            res = data[b]
+            if res.shape[0]==0:
+                empty+=1
+
+            ans = float(np.mean(res[:,-1])) if res.shape[0]!=0 else 0
+            qt = q.tolist()
+            qt += r.tolist()
+            qt.append(ans)
+            queries.append(qt)
+    qs = np.array(queries).reshape(-1, 2*DIMS+1)
+    X_train, X_test, y_train, y_test = train_test_split(
+         qs[:,:qs.shape[1]-1], qs[:,-1], test_size=0.4, random_state=0)
+    lr = LinearRegression()
+    lsnr = PR(lr, vigil_theta=0.21789473684210528, vigil_x=0.5505263157894738)
+    lsnr.fit(X_train, y_train)
+    y_hat = [float(lsnr.get_model(x.reshape(1,-1)).predict(x.reshape(1,-1))) for x in X_test]
+    r2 = metrics.r2_score(y_test,y_hat)
+    kl = kl_divergence_error(y_test, y_hat)
+    nrmse = np.sqrt(metrics.mean_squared_error(y_test, y_hat))/np.mean(y_test)
+    logger.info("R2 Score : {}\nNRMSE : {}\nKL-Divergence : {}".format(r2, kl, nrmse))
+    logger.info("==============================================")
+
+if __name__=='__main__':
+    np.random.seed(15)
+    if args.crimes:
+        accuracy_on_crimes()
+    if args.higgs:
+        accuracy_on_higgs()
