@@ -13,6 +13,7 @@ from setup import logger
 #Models
 from pyearth import Earth
 from sklearn.cluster import KMeans
+from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import KernelDensity
 from sklearn import metrics
@@ -47,10 +48,10 @@ def kl_divergence_error(y, y_hat):
     return entropy(yp,ypg)
 
 def model_based_divergence(X,y, model_2):
-    model_1 = Earth(feature_importance_type='gcv')
+    model_1 = LinearRegression()# Earth(feature_importance_type='gcv')
     model_1.fit(X,y)
-    features_l = model_1.feature_importances_
-    features_else = model_2.feature_importances_
+    features_l = model_1.coef_
+    features_else = model_2.coef_
     a_ = np.linalg.norm(features_l)
     b_ = np.linalg.norm(features_else)
     return np.dot(features_l,features_else)/(a_*b_)
@@ -119,13 +120,13 @@ if __name__=='__main__':
             #Training Models
             logger.info("Model Training Initiation\n=====================")
             kmeans = KMeans()
-            mars_ = Earth(feature_importance_type='gcv',)
+            lr = LinearRegression()
 
-            lsnr = PR(mars_)
+            lsnr = PR(lr)
             lsnr.fit(X_train,y_train)
 
-            mars_global = Earth(feature_importance_type='gcv')
-            mars_global.fit(X_train, y_train)
+            lr_global = LinearRegression()
+            lr_global.fit(X_train, y_train)
 
             logger.info("Accuracy Evaluation on Test set\n=====================")
             for i in range(1000):
@@ -141,10 +142,10 @@ if __name__=='__main__':
                 y = q1[:,agg_map[agg]]
                 X = sc.transform(X)
                 # Train local model (Should be the best out of the 3)
-                mars = Earth(feature_importance_type='gcv')
-                mars.fit(X,y)
-                y_hat = mars.predict(X)
-                metrics_for_model('local',dataset,agg,y_hat,X, y, mars,res_eval)
+                lr = LinearRegression()
+                lr.fit(X,y)
+                y_hat = lr.predict(X)
+                metrics_for_model('local',dataset,agg,y_hat,X, y, lr,res_eval)
 
                 #Obtain metrics for our
                 y_hat_s = lsnr.get_model(q).predict(X)
@@ -152,8 +153,8 @@ if __name__=='__main__':
 
 
                 #Obtain metrics for global
-                y_hat_g = mars_global.predict(X)
-                metrics_for_model('global',dataset,agg,y_hat_g,X,y,mars_global,res_eval)
+                y_hat_g = lr_global.predict(X)
+                metrics_for_model('global',dataset,agg,y_hat_g,X,y,lr_global,res_eval)
             logger.info("Finished Queries")
     eval_df = pd.DataFrame(res_eval)
-    eval_df.to_csv('output/Accuracy/evaluation_results.csv')
+    eval_df.to_csv('output/Accuracy/evaluation_results_linear.csv')
