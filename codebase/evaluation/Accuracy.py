@@ -14,12 +14,17 @@ from setup import logger
 from pyearth import Earth
 from sklearn.cluster import KMeans
 from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import Ridge
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import KernelDensity
+from sklearn.model_selection import train_test_split
 from sklearn import metrics
 from scipy.stats import entropy
 from codebase.framework.Preprocessing import PreProcessing as PR
 import argparse
+import pickle
 import logging
 from query_generation import generate_boolean_vector
 
@@ -122,7 +127,7 @@ def accuracy_on_crimes():
             #Training Models
             logger.info("Model Training Initiation\n=====================")
             kmeans = KMeans()
-            lr = LinearRegression()
+            lr = Ridge()
 
             lsnr = PR(lr)
             lsnr.fit(X_train,y_train)
@@ -201,14 +206,36 @@ def accuracy_on_higgs():
     X_train, X_test, y_train, y_test = train_test_split(
          qs[:,:qs.shape[1]-1], qs[:,-1], test_size=0.4, random_state=0)
     lr = LinearRegression()
-    lsnr = PR(lr, vigil_theta=0.21789473684210528, vigil_x=0.5505263157894738)
+    lsnr = PR(lr)
     lsnr.fit(X_train, y_train)
-    y_hat = [float(lsnr.get_model(x.reshape(1,-1)).predict(x.reshape(1,-1))) for x in X_test]
+    y_hat = np.array([float(lsnr.get_model(x.reshape(1,-1)).predict(x.reshape(1,-1))) for x in X_test])
     r2 = metrics.r2_score(y_test,y_hat)
     kl = kl_divergence_error(y_test, y_hat)
     nrmse = np.sqrt(metrics.mean_squared_error(y_test, y_hat))/np.mean(y_test)
     logger.info("R2 Score : {}\nNRMSE : {}\nKL-Divergence : {}".format(r2, kl, nrmse))
+    #Linear Regression comparsion
+    lr.fit(X_train, y_train)
+    y_hat_lr = lr.predict(X_test)
+    r2_lr = metrics.r2_score(y_test, y_hat_lr)
+    kl_lr = kl_divergence_error(y_test, y_hat_lr)
+    nrmse_lr = np.sqrt(metrics.mean_squared_error(y_test, y_hat_lr))/np.mean(y_test)
+    logger.info("R2 Score : {}\nNRMSE : {}\nKL-Divergence : {}".format(r2_lr, kl_lr, nrmse_lr))
+    dic = {}
+    dic['LPM' ]= [('r2',r2), ('kl',kl), ('nrmse',nrmse)]
+    dic['LR'] = [('r2',r2_lr), ('kl',kl_lr), ('nrmse',nrmse_lr)]
+    #Polynomial regression comparsion
+    for count, degree in enumerate(np.arange(3,10,2)):
+         model = make_pipeline(PolynomialFeatures(degree), Ridge())
+         model.fit(X_train, y_train)
+         y_hat = model.predict(X_test)
+         r2_p = metrics.r2_score(y_test,y_hat)
+         kl_p = kl_divergence_error(y_test, y_hat)
+         nrmse_p = np.sqrt(metrics.mean_squared_error(y_test, y_hat))/np.mean(y_test)
+         dic["LR ({})".format(degree)] = [('r2',r2_p), ('kl',kl_p), ('nrmse',nrmse_p)]
+         print("R2 for degree {} : {}".format(degree, metrics.r2_score(y_test, y_hat)))
     logger.info("==============================================")
+    with open('output/Accuracy/multiple_methods_higgs.pkl', 'wb') as handle:
+        pickle.dump(dic, handle)
 
 if __name__=='__main__':
     np.random.seed(15)
