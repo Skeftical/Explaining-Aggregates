@@ -205,8 +205,8 @@ def accuracy_on_higgs():
     qs = np.array(queries).reshape(-1, 2*DIMS+1)
     X_train, X_test, y_train, y_test = train_test_split(
          qs[:,:qs.shape[1]-1], qs[:,-1], test_size=0.4, random_state=0)
-    lr = LinearRegression()
-    lsnr = PR(lr)
+    earth  = Earth()
+    lsnr = PR(earth)
     lsnr.fit(X_train, y_train)
     y_hat = np.array([float(lsnr.get_model(x.reshape(1,-1)).predict(x.reshape(1,-1))) for x in X_test])
     r2 = metrics.r2_score(y_test,y_hat)
@@ -239,7 +239,7 @@ def accuracy_on_higgs():
 
 if __name__=='__main__':
     np.random.seed(15)
-    if args.crimes:
-        accuracy_on_crimes()
+    # if args.crimes:
+    #     accuracy_on_crimes()
     if args.higgs:
         accuracy_on_higgs()
