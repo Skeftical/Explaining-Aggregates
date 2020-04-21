@@ -46,7 +46,7 @@ def execution_time(train_df):
         kmeans = KMeans(random_state=0)
         mars_ = Earth(feature_importance_type='gcv',)
 
-        lsnr = PR(mars_)
+        lsnr = PR(mars_, vigil_x=0.01)
         start = time.time()
         lsnr.fit(X_train,y_train)
         return (time.time()-start, lsnr.get_number_of_l1(), lsnr.get_number_of_l2())

@@ -212,8 +212,9 @@ def accuracy_on_higgs():
     r2 = metrics.r2_score(y_test,y_hat)
     kl = kl_divergence_error(y_test, y_hat)
     nrmse = np.sqrt(metrics.mean_squared_error(y_test, y_hat))/np.mean(y_test)
-    logger.info("R2 Score : {}\nNRMSE : {}\nKL-Divergence : {}".format(r2, kl, nrmse))
+    logger.info("R2 Score : {}\nNRMSE : {}\nKL-Divergence : {}".format(r2, nrmse, kl))
     #Linear Regression comparsion
+    lr = LinearRegression()
     lr.fit(X_train, y_train)
     y_hat_lr = lr.predict(X_test)
     r2_lr = metrics.r2_score(y_test, y_hat_lr)
