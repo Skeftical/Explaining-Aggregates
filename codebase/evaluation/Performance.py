@@ -69,7 +69,7 @@ def execution_varying(train_df, L1, L2):
         kmeans.fit(X_train[:,:2])
         l2_kmeans = KMeans(n_clusters=L2, random_state=0)
         for _ in range(L1):
-            l2_means.fit(X_train[:,2:])
+            l2_kmeans.fit(X_train[:,2:])
             for _ in range(L2):
                 mars_.fit(X_train[:split,:],y_train[:split])
         return (time.time()-start)
@@ -195,7 +195,7 @@ def prediction_serving_time(train_df):
 if __name__=='__main__':
     np.random.seed(15)
     logger.info("Finding datasets...")
-    # train_df = pd.read_csv('/home/fotis/dev_projects/explanation_framework/input/Crimes_Workload/train_workload_x-gauss-length-gauss-5-users-50000.csv', index_col=0)
+    train_df = pd.read_csv('/home/fotis/dev_projects/explanation_framework/input/Crimes_Workload/train_workload_x-gauss-length-gauss-5-users-50000.csv', index_col=0)
     # logger.info("Beginning Training Time Performance Measurement")
     # data = training_time(train_df)
     # eval_df = pd.DataFrame(data)
