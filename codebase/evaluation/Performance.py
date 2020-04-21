@@ -20,6 +20,8 @@ from codebase.framework.Preprocessing import PreProcessing as PR
 import argparse
 import logging
 import time
+from itertools import product
+
 parser = argparse.ArgumentParser()
 parser.add_argument("--verbose", dest='verbosity', help="increase output verbosity",
                     action="store_true")
@@ -51,6 +53,26 @@ def execution_time(train_df):
         lsnr.fit(X_train,y_train)
         return (time.time()-start, lsnr.get_number_of_l1(), lsnr.get_number_of_l2())
 
+def execution_varying(train_df, L1, L2):
+        X_train = train_df[['x','y','x_range','y_range']].values
+        y_train = train_df['count'].values
+        sc = StandardScaler()
+        sc.fit(X_train)
+        X_train = sc.transform(X_train)
+        #Training Models
+        logger.info("Model Training Initiation\n=====================")
+
+        mars_ = Earth(feature_importance_type='gcv',)
+        start = time.time()
+        kmeans = KMeans(n_clusters=L1, random_state=0)
+        kmeans.fit(X_train[:,:2])
+        l2_kmeans = KMeans(n_clusters=L2, random_state=0)
+        for _ in range(L1):
+            l2_means.fit(X_train[:,2:])
+            for _ in range(L2):
+                mars_.fit(X_train,y_train)
+        return (time.time()-start)
+
 def training_time(train_df):
     initial = train_df.head(10000)
     part = train_df.head(5000)
@@ -64,6 +86,27 @@ def training_time(train_df):
             data['l1'].append(l1)
             data['l2'].append(l2)
             logger.info("Loop {}/100".format(j+10**i))
+    return data
+
+def training_time_varying(train_df):
+    initial = train_df.head(10000)
+    part = train_df.head(5000)
+    data = {'size' : [], 'time':[], 'l1':[],'l2':[]}
+    L1 = range(30, 150, 20)
+    L2 = range(50, 200, 20)
+    l1_l2 = product(*[L1, L2])
+    for i in range(10): #Increase in size
+        initial = pd.concat([initial, part])
+        for l1,l2 in l1_l2:
+            for j in range(10):
+                t = execution_varying(part, l1,l2)
+                data['size'].append(initial.count()[0])
+                data['time'] .append(t)
+                data['l1'].append(l1)
+                data['l2'].append(l2)
+                break;
+            break;
+        break;
     return data
 
 def explanation_serving_x(train_df):
@@ -151,11 +194,16 @@ def prediction_serving_time(train_df):
 if __name__=='__main__':
     np.random.seed(15)
     logger.info("Finding datasets...")
-    train_df = pd.read_csv('/home/fotis/dev_projects/explanation_framework/input/Crimes_Workload/train_workload_x-gauss-length-gauss-5-users-50000.csv', index_col=0)
-    logger.info("Beginning Training Time Performance Measurement")
-    data = training_time(train_df)
+    # train_df = pd.read_csv('/home/fotis/dev_projects/explanation_framework/input/Crimes_Workload/train_workload_x-gauss-length-gauss-5-users-50000.csv', index_col=0)
+    # logger.info("Beginning Training Time Performance Measurement")
+    # data = training_time(train_df)
+    # eval_df = pd.DataFrame(data)
+    # eval_df.to_csv('output/Performance/evaluation_results_training_time.csv')
+
+    logger.info("Beginning Training Time Performance Measurement Varying")
+    data = training_time_varying(train_df)
     eval_df = pd.DataFrame(data)
-    eval_df.to_csv('output/Performance/evaluation_results_training_time.csv')
+    eval_df.to_csv('output/Performance/evaluation_results_training_time_varying.csv')
     #logger.info("Beginning Explanation Serving Performance Measurement on vigil x")
     #data = explanation_serving_x(train_df)
     #eval_df = pd.DataFrame(data)
