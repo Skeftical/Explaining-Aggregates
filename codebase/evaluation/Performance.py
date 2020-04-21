@@ -21,7 +21,8 @@ import argparse
 import logging
 import time
 from itertools import product
-
+import warnings
+warnings.filterwarnings('ignore')
 parser = argparse.ArgumentParser()
 parser.add_argument("--verbose", dest='verbosity', help="increase output verbosity",
                     action="store_true")
@@ -61,8 +62,8 @@ def execution_varying(train_df, L1, L2):
         X_train = sc.transform(X_train)
         #Training Models
         logger.info("Model Training Initiation\n=====================")
-
-        mars_ = Earth(feature_importance_type='gcv',)
+        split = int(X_train.shape[0]/(L1*L2))
+        mars_ = Earth()
         start = time.time()
         kmeans = KMeans(n_clusters=L1, random_state=0)
         kmeans.fit(X_train[:,:2])
@@ -70,7 +71,7 @@ def execution_varying(train_df, L1, L2):
         for _ in range(L1):
             l2_means.fit(X_train[:,2:])
             for _ in range(L2):
-                mars_.fit(X_train,y_train)
+                mars_.fit(X_train[:split,:],y_train[:split])
         return (time.time()-start)
 
 def training_time(train_df):
